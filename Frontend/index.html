@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ML CP - Competitive Programming Support</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+  <style>
+    .tag-link {
+      background-color: white;
+      color: #0d6efd;
+      border: 1px solid #0d6efd;
+      cursor: pointer;
+      user-select: none;
+    }
+    .tag-link.active {
+      background-color: #0d6efd;
+      color: white;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container mt-4">
+    <div class="text-center my-4">
+      <h1 class="fw-bold" style="font-size: 3rem;">
+        <span class="text-primary">ML</span> <span class="text-info">CP</span> <i class="fas fa-code"></i>
+      </h1>
+      <p class="text-muted fst-italic" style="font-size: 1.1rem;">
+        the shitt is REAAL NIggAAaa !!
+      </p>
+    </div>
+
+    <!-- Filters -->
+    <div class="row g-3 align-items-center mt-3">
+      <div class="col-auto">
+        <select id="difficultySelect" class="form-select">
+          <option value="">DIFFICULTY</option>
+          <option value="800">800</option>
+          <option value="900">900</option>
+          <option value="1000">1000</option>
+        </select>
+      </div>
+      <div class="col-auto">
+        <select id="logicSelect" class="form-select">
+          <option value="AND">AND</option>
+          <option value="OR">OR</option>
+        </select>
+      </div>
+      <div class="col-auto">
+        <button class="btn btn-primary" onclick="fetchProblems()">Search</button>
+      </div>
+    </div>
+
+    <!-- Tag badges -->
+    <div class="mt-4" id="problemTagBar"></div>
+
+    <!-- Problem list -->
+    <div class="mt-4" id="problemList"></div>
+  </div>
+
+  <script>
+    const problems = [
+      { name: "DP Example", url: "https://codeforces.com/problemset/problem/1/A", tags: ["DP"], difficulty: "1000" },
+      { name: "String Example", url: "https://codeforces.com/problemset/problem/4/A", tags: ["String"], difficulty: "800" },
+      { name: "Graph Example", url: "https://codeforces.com/problemset/problem/71/A", tags: ["Graph"], difficulty: "1200" },
+      { name: "Combined Problem", url: "#", tags: ["DP", "String"], difficulty: "1300" }
+    ];
+
+    const tagBar = document.getElementById('problemTagBar');
+    const problemList = document.getElementById('problemList');
+
+    const selectedTags = new Set();
+
+    // 1. Render Tags
+    function renderTagPills() {
+      const allTags = Array.from(new Set(problems.flatMap(p => p.tags)));
+      tagBar.innerHTML = allTags.map(tag => `
+        <span class="badge rounded-pill tag-link me-2" data-tag="${tag}">${tag}</span>
+      `).join('');
+
+      document.querySelectorAll('.tag-link').forEach(el => {
+        el.addEventListener('click', function () {
+          const tag = this.dataset.tag;
+          this.classList.toggle('active');
+
+          if (selectedTags.has(tag)) {
+            selectedTags.delete(tag);
+          } else {
+            selectedTags.add(tag);
+          }
+
+          fetchProblems();
+        });
+      });
+    }
+
+    // 2. Filter Problems
+    function fetchProblems() {
+      const difficulty = document.getElementById("difficultySelect").value;
+      const logic = document.getElementById("logicSelect").value;
+
+      const tags = Array.from(selectedTags);
+
+      const filtered = problems.filter(p => {
+        const problemTags = p.tags.map(t => t.toLowerCase());
+        const difficultyMatch = !difficulty || p.difficulty === difficulty;
+
+        if (tags.length === 0) return difficultyMatch;
+
+        const tagMatch = logic === "AND"
+          ? tags.every(tag => problemTags.includes(tag.toLowerCase()))
+          : tags.some(tag => problemTags.includes(tag.toLowerCase()));
+
+        return tagMatch && difficultyMatch;
+      });
+
+      displayProblemList(filtered);
+    }
+
+    // 3. Display Problems
+    function displayProblemList(problemsToShow) {
+      problemList.innerHTML = problemsToShow.length
+        ? problemsToShow.map(p => `
+          <div class="card mb-2 shadow-sm">
+            <div class="card-body">
+              <a href="${p.url}" target="_blank">${p.name}</a>
+              <p class="mb-0"><strong>Tags:</strong> ${p.tags.join(', ')} | <strong>Difficulty:</strong> ${p.difficulty}</p>
+            </div>
+          </div>
+        `).join('')
+        : '<div class="alert alert-info">No problems found.</div>';
+    }
+
+    // Init
+    renderTagPills();
+    displayProblemList(problems);
+  </script>
+</body>
+</html>
