@@ -6,14 +6,19 @@
 
   <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-
   <!-- Font Awesome -->
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 
   <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      font-family: 'Inter', sans-serif;
+    }
+
     .tag-link {
       background-color: white;
       color: #0d6efd;
@@ -21,15 +26,58 @@
       cursor: pointer;
       user-select: none;
     }
+
     .tag-link.active {
       background-color: #0d6efd;
       color: white;
+    }
+
+    #main-content {
+      flex: 1;
+    }
+
+    footer {
+      font-size: 0.8rem;
+      padding: 10px 0;
     }
   </style>
 </head>
 
 <body>
-  <div class="container mt-4">
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
+    <div class="container-fluid">
+      <a class="navbar-brand fw-bold text-primary" href="#">
+        <i class="fas fa-code me-1"></i> ML <span class="text-info">CP</span>
+      </a>
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mlcpNavbar">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="mlcpNavbar">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item"><a class="nav-link" href="index.html">Problems</a></li>
+          <li class="nav-item"><a class="nav-link" href="Contests.html">Contests</a></li>
+          <li class="nav-item"><a class="nav-link" href="ojs.html">OJ's</a></li>
+        </ul>
+
+        <!-- Profile Icon + User Search Bar -->
+        <div class="d-flex align-items-center gap-3">
+          <a href="profile.html" class="text-decoration-none text-dark" title="Your Profile">
+          Profile  <i class="fas fa-user-circle fa-xl"></i>
+          </a>
+          <form class="d-flex" role="search" onsubmit="event.preventDefault(); searchUsers();">
+            <input class="form-control me-2" id="userSearchInput" type="search" placeholder="Search users..." />
+            <button class="btn btn-outline-primary" type="submit">Search</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <div id="main-content" class="container mt-4">
     <div class="text-center my-4">
       <h1 class="fw-bold" style="font-size: 3rem;">
         <span class="text-primary">ML</span> <span class="text-info">CP</span> <i class="fas fa-code"></i>
@@ -67,6 +115,20 @@
     <div class="mt-4" id="problemList"></div>
   </div>
 
+  <!-- Footer -->
+  <footer class="bg-light text-muted text-center border-top mt-auto">
+    <div class="container d-flex justify-content-between align-items-center">
+      <div>
+        <strong class="text-primary">ML <span class="text-info">CP</span></strong>
+        <span class="ms-2">Helping Competitive Programmers</span>
+      </div>
+      <div>
+        © 2025 ML CP. All rights reserved by Istiaque | Hamza | Sadman.
+      </div>
+    </div>
+  </footer>
+
+  <!-- JavaScript -->
   <script>
     const problems = [
       { name: "DP Example", url: "https://codeforces.com/problemset/problem/1/A", tags: ["DP"], difficulty: "1000" },
@@ -77,10 +139,8 @@
 
     const tagBar = document.getElementById('problemTagBar');
     const problemList = document.getElementById('problemList');
-
     const selectedTags = new Set();
 
-    // 1. Render Tags
     function renderTagPills() {
       const allTags = Array.from(new Set(problems.flatMap(p => p.tags)));
       tagBar.innerHTML = allTags.map(tag => `
@@ -103,11 +163,9 @@
       });
     }
 
-    // 2. Filter Problems
     function fetchProblems() {
       const difficulty = document.getElementById("difficultySelect").value;
       const logic = document.getElementById("logicSelect").value;
-
       const tags = Array.from(selectedTags);
 
       const filtered = problems.filter(p => {
@@ -126,7 +184,6 @@
       displayProblemList(filtered);
     }
 
-    // 3. Display Problems
     function displayProblemList(problemsToShow) {
       problemList.innerHTML = problemsToShow.length
         ? problemsToShow.map(p => `
@@ -140,9 +197,20 @@
         : '<div class="alert alert-info">No problems found.</div>';
     }
 
-    // Init
+    function searchUsers() {
+      const query = document.getElementById("userSearchInput").value.trim();
+      if (query) {
+        console.log("Searching for user:", query);
+        // Optionally redirect or show results
+        // window.location.href = `users.html?query=${encodeURIComponent(query)}`;
+      }
+    }
+
     renderTagPills();
     displayProblemList(problems);
   </script>
+
+  <!-- Bootstrap JS (Optional, for dropdowns/collapses if used) -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
